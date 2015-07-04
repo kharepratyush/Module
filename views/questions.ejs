@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+
+    <script>
+
+    function addVote(id,id1,uid)
+      {
+        //alert(id1);
+        upvid = "ba" + id1;
+        finalid = "va" + id1;
+
+        var socket = io.connect();
+        //console.log(id);
+        //alert(finalid);
+
+        //alert(parseInt(document.getElementById(finalid).innerHTML));
+        var data = {project_answer_id: id,user_id: uid};
+
+        var socket = io.connect();
+        //console.log(id);
+        //data=['vote_count','{gid}','{uid}','{data[i].}','{project_question_id}'];
+        //socket.emit('ans_upvote',id);
+        socket.emit('ans_upvote',data);
+        socket.on('upvoted',function(user){
+            //alert("already upvoted");
+            document.getElementById(upvid).disabled = true;
+        });
+        socket.on('refresh vote',function(va_count){
+           document.getElementById(finalid).innerHTML = va_count;
+        });
+      }
+
+    function submitData()
+    {
+        var x;
+        x = document.aform['answer'].value;
+        x = x.trim();
+        if( x != "")
+        {
+        document.aform['answer'].value=x;
+        document.aform['user_id'].value=9; //authentication
+        document.aform.submit();
+        return true;
+        }
+        alert("fill answer");
+        return false;
+    };
+    </script>
+  </head>
+  <body>
+  	<a href="/"> Home </a>
+
+  	<a href="/forum">Forum </a>
+  	<a href="/chat">Chat </a>
+  	<a href="/collab">Collaborative Workspace</a>
+
+  	<a href="/library">Library</a>
+
+  	<a href="/profile">Profile</a>
+
+  	
+    <p>
+      <%= quest_data[0].question %>
+      <%= quest_data[0].vote_count + " upvotes"%> 
+    </p>
+
+   <p>
+
+    <table>
+        <tr>
+            <th><%= count_data[0].ansCount + " Answers"%></th>
+        </tr>
+        
+        <% if(ans_data){%>
+        <% for(var i = 0; i < ans_data.length; i++){ %>
+            <tr>
+            <td><%=(i+1)%></td>
+            <td><%= ans_data[i].answer%></td>
+            <td id "ansbutton" ><button style = "color:#00BCD4" id = <%= "ba" + i%> onclick = "addVote(<%= ans_data[i].project_answer_id%>,<%= i %>, <%= ans_data[i].user_id %>)">Upvote</button></td>
+            <td id=<%= "va" + i %> ><%= ans_data[i].vote_count %></td>
+            </tr>
+        <% } %>
+        <% } %>
+    
+    </table>
+   </p>
+
+
+
+    <form method="post" name="aform">
+      <TEXTAREA NAME="answer" ROWS="5" COLS="50"></TEXTAREA>
+      <input type="hidden" name="user_id">
+      <input onclick="submitData();" type="submit">
+    </form>
+  	
+
+  </body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+
+
+    <script>
+
+   function addVote(id,id1,flag)
+   {
+        //document.getElementById()
+                
+        if(flag == 0)
+        {
+           //data[i].upvoteflag = data[i].upvoteflag +1; 
+        //alert(id1);
+        upvid = "b" + id1;
+        finalid = "v" + id1;
+
+        //alert(finalid);
+
+        //alert(parseInt(document.getElementById(finalid).innerHTML));
+
+        //document.getElementById(finalid).innerHTML=parseInt(document.getElementById(finalid).innerHTML)+1;
+
+
+        var socket = io.connect();
+        console.log(id);
+
+        //data=['vote_count','{gid}','{uid}','{data[i].}','{project_question_id}'];
+        socket.emit('upvote',id);
+        socket.on('refresh vote',function(v_count){
+            document.getElementById(finalid).innerHTML = v_count;
+        });
+        
+        document.getElementById(upvid).disabled = true;
+        
+        }
+        else
+        {
+            //upvid = id1 + "b";
+            document.getElementById(upvid).disabled = true;
+            //alert("Already upvoted");
+        }
+
+            
+
+
+
+    }
+     
+    function submitData()
+    {
+        
+        x = document.qform['question'].value;
+        //console.log(x);
+        x=x.trim();
+        console.log(x);
+        if(x != "")
+        {
+            document.qform['question'].value=x;
+            document.qform['user_id'].value=9; //authentication
+            document.qform['project_id'].value=1;
+            document.qform.submit();
+            return true;
+        }
+        alert("Enter text");
+        return false;
+
+    }
+    </script>
+
+   
+
+
+
+
+
+  </head>
+  <body>
+    <a href="/"> Home </a>
+
+    <a href="/forum">Forum </a>
+    <a href="/chat">Chat </a>
+    <a href="/collab">Collaborative Workspace</a>
+
+    <a href="/library">Library</a>
+
+    <a href="/profile">Profile</a>
+
+    <h1><%= title %></h1>
+    <p>Welcome to <%= title %></p>
+    <p>
+    
+    <p>
+
+    <table>
+        <tr>
+            <th>Questions</th>
+        </tr>
+        
+        <%if(data){%>
+        <% for(var i = 0; i < data.length; i++){ %>
+            <tr>
+            <td><%=(i+1)%></td>
+            <!--<td><%= data[i].upvoteflag %></td> -->
+            <td><a href="/forum/question/<%= data[i].project_question_id%>"><%= data[i].question%></a>
+            </td>
+            <td id="button" ><button style = "color:#00BCD4" id = <%= "b" + i%> onclick = "addVote(<%= data[i].project_question_id%>,<%= i %>,<%=data[i].upvoteflag%>)">Upvote</button></td>
+            <td id=<%= "v" + i %> ><%= data[i].vote_count %></td> 
+
+            </tr>
+        <% } %> 
+        <% } %>
+        
+    
+    </table>
+   </p>
+   <!-- upvote -->
+    
+
+
+
+    <form name="qform" method="post">
+            <TEXTAREA NAME="question" ROWS="5" COLS="50"></TEXTAREA>
+            <input type="hidden" name="user_id">
+            <input type="hidden" name="project_id">
+            <input onclick="submitData();" type="submit">
+    </form>
+    
+  </body>
+</html>

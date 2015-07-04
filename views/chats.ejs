@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Chat</title>
+     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input { border: 0; padding: 10px; width: 80%; margin-right: .5%; }
+      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #messages { list-style-type: none; margin: 0; padding: 0px 0px 40px 0px; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+    </style>
+  </head>
+  <body>
+      <a href="/"> Home </a>
+
+    <a href="/forum">Forum </a>
+    <a href="/chat">Chat </a>
+    <a href="/collaborator">Collaborative Workspace</a>
+
+    <a href="/library">Library</a>
+
+    <a href="/profile">Profile</a>
+
+  
+    
+
+      <div >
+        
+
+        <ul id="messages">
+        
+        <%for(var i=rows.length-1; i>=0; i--) {%>
+             <li><%=rows[i].user_id%>:<%=rows[i].message%></li>
+        <% } %>
+        
+        
+
+        </ul>
+        
+
+      </div>
+      <div>
+        <form action="">
+          <span style="background: #fff; width:20%; padding: 10px;"><%= uid %></span>
+          <input id="m" autocomplete="off" />
+          <button>Send</button>
+        </form>
+      </div>
+    
+    
+   
+    <script>
+      var socket = io.connect();
+      //gid, uid and project_id from authentication
+      project_id=1; //from authentication
+      uid=9;
+      data=['{gid}',uid,project_id];
+      socket.emit('join',data);
+      $("#messages").scroll(function() {});
+
+     $('form').submit(function(){
+        data_mess=['{gid}',uid,project_id,$('#m').val()];
+        if(data_mess[3]!="")
+        {  
+          socket.emit('chat-message', data_mess);
+          $('#m').val('');
+        }
+        return false;
+      });
+
+
+      socket.on('chat-message', function(data_mess){
+        //console.log("Client :" + data_mess[0]+"     "+data_mess[1]+"   "+data_mess[2]+"   "+data_mess[3]);
+        $('#messages').append($('<li>').text(data[1]+":"+data_mess[3]));
+        $(document).scrollTop($(document).height());
+      });
+
+
+      
+
+    </script>
+  </body>
+</html>

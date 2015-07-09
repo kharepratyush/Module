@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Project Rating</title>
+        <link rel='stylesheet' href='/stylesheets/style.css' />
+
+	</head>
+	<body>
+		<p><b>Please fill your feedback</b></p>
+		<p>Please rate the project in range 1 to 5</p>
+	    <form
+	        name    ="rating_form" 
+	        method  =  "post">
+	            <input type="number" name="rating" min="1" max="5">
+	            <input type="hidden" name="user_id">
+	            <input type="hidden" name="project_id">
+	    <p>Please give some feedback for this project</p>
+	            <TEXTAREA NAME="feedback" ROWS="5" COLS="50"></TEXTAREA>
+	            <input onclick="submitData();" type="submit">
+	    </form>
+	</body>
+
+	<script>
+
+		 function submitData()
+		    {
+		        
+		        x = document.rating_form['rating'].value;
+		        y = document.rating_form['feedback'].value;
+		        y = y.trim();
+		        //console.log(x);
+		        x=x.trim();
+		        console.log(x);
+		        if(x == "" || y == "")
+		        {
+		       		alert("Enter between 1 to 5");
+		        	//window.redirect('/after');
+		        	location.reload();
+		        	//return false;
+		      	}
+		            document.rating_form['rating'].value=x;
+		            document.rating_form['feedback'].value = y;
+		            document.rating_form['user_id'].value=13; //authentication
+		            document.rating_form['project_id'].value=1;
+		            document.rating_form.action="/after/project-rating/";
+		            document.rating_form.submit();
+		            return true;
+		        
+
+		    }
+	</script>
+
+</html>	
